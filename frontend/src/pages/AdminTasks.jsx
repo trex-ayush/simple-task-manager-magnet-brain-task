@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api/client";
 import { Link } from "react-router-dom";
-import PriorityBadge, {
-  getPriorityCardClass,
-} from "../components/PriorityBadge";
+import PriorityBadge from "../components/PriorityBadge";
 
 const AdminTasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -33,13 +31,14 @@ const AdminTasks = () => {
   }, []);
 
   const filteredTasks = tasks.filter((task) => {
-    const matchesSearch = task.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    const query = searchQuery.toLowerCase();
+    const matchesSearch =
+      task.title.toLowerCase().includes(query) ||
+      (task.assignedTo?.name.toLowerCase().includes(query) ?? false);
+
     const matchesStatus = statusFilter ? task.status === statusFilter : true;
-    const matchesPriority = priorityFilter
-      ? task.priority === priorityFilter
-      : true;
+    const matchesPriority = priorityFilter ? task.priority === priorityFilter : true;
+
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
@@ -59,7 +58,7 @@ const AdminTasks = () => {
       <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
         <input
           type="text"
-          placeholder="Search by title..."
+          placeholder="Search by title or assigned user..."
           className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200 focus:outline-none"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -229,12 +228,8 @@ const AdminTasks = () => {
               d="M9.75 17h4.5m2.25 4.5l-1.125-1.5h-6.75l-1.125 1.5m8.25 0H6.375c-.621 0-1.125-.504-1.125-1.125V5.625c0-.621.504-1.125 1.125-1.125h11.25c.621 0 1.125.504 1.125 1.125v14.75c0 .621-.504 1.125-1.125 1.125z"
             />
           </svg>
-          <h3 className="text-lg font-semibold text-gray-700">
-            No tasks found
-          </h3>
-          <p className="text-gray-500 text-sm mt-1">
-            Try adjusting filters or search.
-          </p>
+          <h3 className="text-lg font-semibold text-gray-700">No tasks found</h3>
+          <p className="text-gray-500 text-sm mt-1">Try adjusting filters or search.</p>
         </div>
       )}
     </div>
