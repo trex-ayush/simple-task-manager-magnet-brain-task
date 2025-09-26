@@ -95,7 +95,8 @@ exports.loginUser = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "Strict",
+      secure: true,
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -163,7 +164,7 @@ exports.getMyProfile = async (req, res) => {
 exports.getUsers = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10; 
+    const limit = parseInt(req.query.limit) || 10;
 
     const skip = (page - 1) * limit;
 
